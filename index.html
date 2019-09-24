@@ -12,6 +12,7 @@
             display: flex;
 
         }
+
         .input {
             width: 500px;
             height: 40px;
@@ -21,27 +22,34 @@
             background: #F6F6f6;
             border-radius: 8px;
         }
+
         .btn {
             font-weight: 700;
             color: white;
             text-decoration: none;
             padding: .8em 1em calc(.8em + 3px);
             border-radius: 3px;
-            background: rgb(64,199,129);
-            box-shadow: 0 -3px rgb(53,167,110) inset;
+            background: rgb(64, 199, 129);
+            box-shadow: 0 -3px rgb(53, 167, 110) inset;
             transition: 0.2s;
             margin-left: 20px;
             font-size: 15px;
         }
-        .btn:hover { background: rgb(53, 167, 110); }
-        .btn:active {
-            background: rgb(33,147,90);
-            box-shadow: 0 3px rgb(33,147,90) inset;
+
+        .btn:hover {
+            background: rgb(53, 167, 110);
         }
+
+        .btn:active {
+            background: rgb(33, 147, 90);
+            box-shadow: 0 3px rgb(33, 147, 90) inset;
+        }
+
         .btnContainer {
             margin-right: 30px;
 
         }
+
         .btnContainer button {
             margin: 10px;
         }
@@ -51,6 +59,19 @@
             margin: 0 auto;
         }
 
+        .isDone label {
+            text-decoration: line-through;
+            opacity: 0.5;
+            background: #CCC;
+        }
+
+        label {
+            margin-right: 30px;
+        }
+
+        li {
+            margin: 10px;
+        }
 
     </style>
 </head>
@@ -66,7 +87,7 @@
     $input.setAttribute('type', 'text');
     $input.classList.add('input');
     $form.append($input);
-    const  $button = document.createElement('button');
+    const $button = document.createElement('button');
     $button.setAttribute('type', 'button');
     $button.classList.add('btn');
     $button.innerText = 'Add task';
@@ -76,164 +97,165 @@
     document.body.append($ul);
 
     const $btnAddTask = document.querySelector('.btn');
-
     const $toDo = document.querySelector('.toDo');
-
     const listToDo = [];
 
-    $btnAddTask.addEventListener('click', function(){
-       createNote();
-    });
+    function createNewNote(text) {
+        const $note = document.createElement('li');
+        $note.classList.add('note');
 
-        function createNote() {
-            const valueTask = $input.value;
-           listToDo.push({
-                text: checkIsEmptyStr(valueTask),
-                isDone: false,
-                date: getNewDate(),
-                id: generateId()
+        const newTask = {
+            text: checkIsEmptyStr(text),
+            isDone: false,
+            id: generateId()
+        };
+        listToDo.push(newTask);
+
+        $note.dataset.id = newTask.id;
+
+        const $label = document.createElement('label');
+        $label.innerText = text;
+        $note.append($label);
+
+        const $editBtn = document.createElement('button');
+        $editBtn.classList.add('edit');
+        $editBtn.innerText = 'Edit';
+        $note.append($editBtn);
+        const $doneBtn = document.createElement('button');
+        $doneBtn.classList.add('done');
+        $doneBtn.innerText = 'Done';
+        $note.append($doneBtn);
+        const $deleteBtn = document.createElement('button');
+        $deleteBtn.classList.add('delete');
+        $deleteBtn.innerText = 'Delete';
+        $note.append($deleteBtn);
+
+        $toDo.append($note);
+        return $note;
+    }
+
+    function addNote() {
+        if (!checkUniqueNote($input.value)) {
+            let listItem = createNewNote($input.value);
+            bindTaskEvent(listItem);
+            $input.value = "";
+        } else
+            return false;
+    }
+
+    function checkUniqueNote(valueTask) {
+        if (listToDo.length) {
+            let duplicates = listToDo.some(function (note) {
+                return note.text === valueTask;
             });
-
-            // function checkUniqueNote(valueTask) {
-            // if (listToDo.length) {
-            //     let duplicates = listToDo.some(function (note) {
-            //         return note.text === valueTask;
-            //
-            //     });
-            //     return duplicates;
-            //     // if (duplicates) {
-            //     //     let message = alert('Duplicates!!!');
-            //     //     return message;
-            //     // }
-            // }
-
-
-            const $note = document.createElement('li');
-            $note.classList.add('note');
-            $note.innerText = valueTask;
-            console.log(this.listToDo.id);
-
-
-            // const $inputNote = document.createElement('input');
-            // $inputNote.innerText = valueTask;
-            // $inputNote.setAttribute('type', 'text');
-            // $note.append($inputNote);
-
-            // const $btnContainer = document.createElement('span');
-            // $btnContainer.classList.add('btnContainer');
-            const $editBtn = document.createElement('button');
-            $editBtn.classList.add('edit');
-            $editBtn.innerText = 'Edit';
-            $note.append($editBtn);
-            const $doneBtn = document.createElement('button');
-            $doneBtn.classList.add('done');
-            $doneBtn.innerText = 'Done';
-            $note.append($doneBtn);
-            const $deleteBtn = document.createElement('button');
-            $deleteBtn.classList.add('delete');
-            $deleteBtn.innerText = 'Delete';
-            $note.append($deleteBtn);
-
-
-            $toDo.append($note);
-            $input.value = '';
-
-
-            function checkIsEmptyStr(valueTask) {
-                if (valueTask.length === 0 || !(valueTask.trim())) {
-                    const msg = alert('You wrote nothing! Fill in something!!!');
-                    return msg;
-                } else
-                    return valueTask;
-            }
-
-            function getNewDate() {
-                let date = new Date();
-                let day = date.getDate().toString().padStart(2, '0');
-                let month = (date.getMonth() + 1).toString().padStart(2, '0');
-                let year = date.getFullYear().toString().padStart(2, '0');
-                let hour = (date.getHours() + 1).toString().padStart(2, '0');
-                let minutes = date.getMinutes().toString().padStart(2, '0');
-                let seconds = date.getSeconds().toString().padStart(2, '0');
-                let today = day + '/' + month + '/' + year + '.' + hour + '/' + minutes + '/' + seconds;
-                return today;
-            }
-
-            function generateId() {
-                let newId = '';
-                let randomStr = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-                for (let i = 0; i < 2; i++) {
-                    newId += randomStr.charAt(Math.floor(Math.random() * randomStr.length));
-                }
-                let randonNum = '0123456789';
-                for (let j = 0; j < 3; j++) {
-                    newId += randonNum.charAt(Math.floor(Math.random() * randonNum.length));
-                }
-                return newId;
-            }
-
-            // $note.dataset.id = listToDo.id;
-
-
-
-            const $btnDelTask = document.querySelector('.delete');
-
-            $btnDelTask.addEventListener('click', function (e) {
-                let li = e.target.parentNode;
-                let ul = li.parentNode;
-                ul.removeChild(li);
-
-
-                console.log(listToDo);
-
-
-            // });
+            return duplicates;
         }
+    }
 
-    // function removeNote(id, isRemoved) {
-    //     let noteIndex = listToDo.findIndex(function (note) {
-    //         if (note.id === id)
-    //         {return note}
-    //
-    //     });
-    //     if (isRemoved) {
-    //         listToDo.splice(noteIndex, 1);
-    //         let listItem = this.parentNode;
-    //         let ul = listItem.parentNode;
-    //         ul.removeChild(listItem);
-    //     }
-    //     return this.notes;
+    function checkIsEmptyStr(valueTask) {
+        if (valueTask.length === 0 || !(valueTask.trim())) {
+            const msg = alert('You wrote nothing! Fill in something!!!');
+            return msg;
+        } else
+            return valueTask;
+    }
 
-        //     isRemoved = confirm('Remove deal?');
-        // let listItem = this.parentNode;
-        // let ul = listItem.parentNode;
-        //     if (isRemoved) {
-        //         ul.removeChild(listItem);
-        //     }
+    function generateId() {
+        let newId = '';
+        let randomStr = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+        for (let i = 0; i < 2; i++) {
+            newId += randomStr.charAt(Math.floor(Math.random() * randomStr.length));
+        }
+        let randonNum = '0123456789';
+        for (let j = 0; j < 3; j++) {
+            newId += randonNum.charAt(Math.floor(Math.random() * randonNum.length));
+        }
+        return newId;
+    }
 
-    <!--}-->
+    $btnAddTask.addEventListener('click', addNote);
+
+    function removeNote() {
+        let ask = confirm('Delete note?');
+        if (ask) {
+            let li = this.parentNode;
+            let idLi = li.dataset.id;
+            let ul = li.parentNode;
+
+            ul.removeChild(li);
+            deleteNote(idLi);
+        }
+    }
+
+    function deleteNote(id) {
+        let noteIndex = listToDo.findIndex(function (note) {
+            if (note.id === id) {
+                return note
+            }
+        });
+        listToDo.splice(noteIndex, 1);
+        return listToDo;
+
+    }
+
+    function editNote() {
+        let ask = confirm('Edit note?');
+
+        let listItem = this.parentNode;
+        let idLi = listItem.dataset.id;
+        let label = listItem.querySelector('label');
+        if (ask) {
+            let editText = prompt('Enter new text', '');
+            label.innerText = editText;
+            editList(idLi, editText);
+        }
+    }
+
+    function editList(id, editText) {
+        let currentIndex = listToDo.findIndex(function (note) {
+            if (note.id === id) {
+                return note
+            }
+        });
+        listToDo[currentIndex].text = editText;
 
 
+    }
 
+    function isDoneNote() {
+        let liItem = this.parentNode;
+        let idLi = liItem.dataset.id;
+        liItem.classList.toggle('isDone');
+        setNoteStatus(idLi);
+        let child = liItem.childNodes;
 
+        for (let i = 1; i < 3; i++) {
+            child[i].setAttribute('disabled', 'disabled')
+        }
+    }
 
+    function setNoteStatus(id) {
+        let currentIndex = listToDo.findIndex(function (note) {
+            if (note.id === id) {
+                return note
+            }
+        });
+        listToDo[currentIndex].isDone = !listToDo[currentIndex].isDone;
+        return listToDo;
+    }
 
-    // function removeNote(id, isRemoved) {
-    //     let noteIndex = listToDo.findIndex(function (note) {
-    //         if (note.id === id)
-    //         {return note}
-    //
-    //     });
-    //     isRemoved = confirm('Remove deal?');
-    //     if (isRemoved) {
-    //         listToDo.splice(noteIndex, 1)
-    //     }
-    //     return listToDo;
-    // }
+    function bindTaskEvent($note) {
+        let editBtn = $note.querySelector('.edit');
+        let doneBtn = $note.querySelector('.done');
+        let deleteBtn = $note.querySelector('.delete');
 
+        editBtn.addEventListener('click', editNote);
+        doneBtn.addEventListener('click', isDoneNote);
+        deleteBtn.addEventListener('click', removeNote);
+    }
 
+    console.log(listToDo);
 
 </script>
-
 </body>
 </html>
