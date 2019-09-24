@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <!--<link rel = "stylesheet" href="material-icons.css">-->
+    <style>
+        .container {
+            margin: 0 auto;
+            width: 900px;
+            margin-top: 50px;
+            display: flex;
+
+        }
+        .input {
+            width: 500px;
+            height: 40px;
+            font-size: 25px;
+            padding: 6px 0 4px 10px;
+            border: 1px solid #cecece;
+            background: #F6F6f6;
+            border-radius: 8px;
+        }
+        .btn {
+            font-weight: 700;
+            color: white;
+            text-decoration: none;
+            padding: .8em 1em calc(.8em + 3px);
+            border-radius: 3px;
+            background: rgb(64,199,129);
+            box-shadow: 0 -3px rgb(53,167,110) inset;
+            transition: 0.2s;
+            margin-left: 20px;
+            font-size: 15px;
+        }
+        .btn:hover { background: rgb(53, 167, 110); }
+        .btn:active {
+            background: rgb(33,147,90);
+            box-shadow: 0 3px rgb(33,147,90) inset;
+        }
+        .btnContainer {
+            margin-right: 30px;
+
+        }
+        .btnContainer button {
+            margin: 10px;
+        }
+
+        ul {
+            width: 900px;
+            margin: 0 auto;
+        }
+
+
+    </style>
+</head>
+<body>
+<script>
+    const $container = document.createElement('div');
+    $container.classList.add('container');
+    document.body.prepend($container);
+    const $form = document.createElement('form');
+    $form.classList.add('form');
+    $container.append($form);
+    const $input = document.createElement('input');
+    $input.setAttribute('type', 'text');
+    $input.classList.add('input');
+    $form.append($input);
+    const  $button = document.createElement('button');
+    $button.setAttribute('type', 'button');
+    $button.classList.add('btn');
+    $button.innerText = 'Add task';
+    $container.append($button);
+    const $ul = document.createElement('ul');
+    $ul.classList.add('toDo');
+    document.body.append($ul);
+
+    const $btnAddTask = document.querySelector('.btn');
+
+    const $toDo = document.querySelector('.toDo');
+
+    const listToDo = [];
+
+    $btnAddTask.addEventListener('click', function(){
+       createNote();
+    });
+
+        function createNote() {
+            const valueTask = $input.value;
+           listToDo.push({
+                text: checkIsEmptyStr(valueTask),
+                isDone: false,
+                date: getNewDate(),
+                id: generateId()
+            });
+
+            // function checkUniqueNote(valueTask) {
+            // if (listToDo.length) {
+            //     let duplicates = listToDo.some(function (note) {
+            //         return note.text === valueTask;
+            //
+            //     });
+            //     return duplicates;
+            //     // if (duplicates) {
+            //     //     let message = alert('Duplicates!!!');
+            //     //     return message;
+            //     // }
+            // }
+
+
+            const $note = document.createElement('li');
+            $note.classList.add('note');
+            $note.innerText = valueTask;
+            console.log(this.listToDo.id);
+
+
+            // const $inputNote = document.createElement('input');
+            // $inputNote.innerText = valueTask;
+            // $inputNote.setAttribute('type', 'text');
+            // $note.append($inputNote);
+
+            // const $btnContainer = document.createElement('span');
+            // $btnContainer.classList.add('btnContainer');
+            const $editBtn = document.createElement('button');
+            $editBtn.classList.add('edit');
+            $editBtn.innerText = 'Edit';
+            $note.append($editBtn);
+            const $doneBtn = document.createElement('button');
+            $doneBtn.classList.add('done');
+            $doneBtn.innerText = 'Done';
+            $note.append($doneBtn);
+            const $deleteBtn = document.createElement('button');
+            $deleteBtn.classList.add('delete');
+            $deleteBtn.innerText = 'Delete';
+            $note.append($deleteBtn);
+
+
+            $toDo.append($note);
+            $input.value = '';
+
+
+            function checkIsEmptyStr(valueTask) {
+                if (valueTask.length === 0 || !(valueTask.trim())) {
+                    const msg = alert('You wrote nothing! Fill in something!!!');
+                    return msg;
+                } else
+                    return valueTask;
+            }
+
+            function getNewDate() {
+                let date = new Date();
+                let day = date.getDate().toString().padStart(2, '0');
+                let month = (date.getMonth() + 1).toString().padStart(2, '0');
+                let year = date.getFullYear().toString().padStart(2, '0');
+                let hour = (date.getHours() + 1).toString().padStart(2, '0');
+                let minutes = date.getMinutes().toString().padStart(2, '0');
+                let seconds = date.getSeconds().toString().padStart(2, '0');
+                let today = day + '/' + month + '/' + year + '.' + hour + '/' + minutes + '/' + seconds;
+                return today;
+            }
+
+            function generateId() {
+                let newId = '';
+                let randomStr = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+                for (let i = 0; i < 2; i++) {
+                    newId += randomStr.charAt(Math.floor(Math.random() * randomStr.length));
+                }
+                let randonNum = '0123456789';
+                for (let j = 0; j < 3; j++) {
+                    newId += randonNum.charAt(Math.floor(Math.random() * randonNum.length));
+                }
+                return newId;
+            }
+
+            // $note.dataset.id = listToDo.id;
+
+
+
+            const $btnDelTask = document.querySelector('.delete');
+
+            $btnDelTask.addEventListener('click', function (e) {
+                let li = e.target.parentNode;
+                let ul = li.parentNode;
+                ul.removeChild(li);
+
+
+                console.log(listToDo);
+
+
+            // });
+        }
+
+    // function removeNote(id, isRemoved) {
+    //     let noteIndex = listToDo.findIndex(function (note) {
+    //         if (note.id === id)
+    //         {return note}
+    //
+    //     });
+    //     if (isRemoved) {
+    //         listToDo.splice(noteIndex, 1);
+    //         let listItem = this.parentNode;
+    //         let ul = listItem.parentNode;
+    //         ul.removeChild(listItem);
+    //     }
+    //     return this.notes;
+
+        //     isRemoved = confirm('Remove deal?');
+        // let listItem = this.parentNode;
+        // let ul = listItem.parentNode;
+        //     if (isRemoved) {
+        //         ul.removeChild(listItem);
+        //     }
+
+    <!--}-->
+
+
+
+
+
+
+    // function removeNote(id, isRemoved) {
+    //     let noteIndex = listToDo.findIndex(function (note) {
+    //         if (note.id === id)
+    //         {return note}
+    //
+    //     });
+    //     isRemoved = confirm('Remove deal?');
+    //     if (isRemoved) {
+    //         listToDo.splice(noteIndex, 1)
+    //     }
+    //     return listToDo;
+    // }
+
+
+
+</script>
+
+</body>
+</html>
